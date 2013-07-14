@@ -11,7 +11,14 @@ class DefaultRepositoryHandler():
 
     def update_repository(self, path, remote_url, remote_branch):
         print 'Updating repository %s ...' % path
-        subprocess.check_call(['git', 'pull', '--rebase'])
+
+        remote_name = 'origin'
+
+        url = subprocess.check_output(['git', 'config', 'remote.%s.url' % remote_name], cwd=path)
+        if url != remote_url:
+            subprocess.check_call(['git', 'config', 'remote.%s.url' % remote_name, remote_url], cwd=path)
+
+        subprocess.check_call(['git', 'pull', '--rebase'], cwd=path)
 
     def clone_repository(self, path, remote_url, remote_branch):
         print 'Cloning repository %s ...' % path
