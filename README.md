@@ -1,4 +1,4 @@
-[![Stories in Ready](http://badge.waffle.io/solarnz/gmrh.png)](http://waffle.io/solarnz/gmrh)  
+[![Build Status](https://travis-ci.org/solarnz/gmrh.png?branch=master)](https://travis-ci.org/solarnz/gmrh)[![Stories in Ready](http://badge.waffle.io/solarnz/gmrh.png)](http://waffle.io/solarnz/gmrh)  
 gmrh
 ====
 
