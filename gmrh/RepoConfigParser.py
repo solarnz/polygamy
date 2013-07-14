@@ -1,9 +1,10 @@
 import json
-from types import ListType
+
 
 class BaseConfigParser:
     def parse_file(self):
         pass
+
 
 class JsonConfigParser(BaseConfigParser):
     CONFIG_FILE = '.gmrh.json'
