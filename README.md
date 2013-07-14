@@ -9,8 +9,8 @@ Installation
 
 Configuration
 -------------
-.gmrh.json
-`
+`.gmrh.json`
+```json
 {
     "remotes": {
         "github": {
@@ -25,8 +25,7 @@ Configuration
         }
     }
 }
-`
-
+```
 Usage
 -----
 `gmrh` in the same directory that the .gmrh.json file is in.
