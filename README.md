@@ -1,3 +1,4 @@
+[![Stories in Ready](http://badge.waffle.io/solarnz/gmrh.png)](http://waffle.io/solarnz/gmrh)  
 gmrh
 ====
 
