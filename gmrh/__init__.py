@@ -6,9 +6,11 @@ import RepositoryHandler
 
 def start_func():
     parser = RepoConfigParser.JsonConfigParser()
-    parser.parse_file()
+    config_file, working_directory = parser.find_config_file(path=os.getcwd())
+    parser.parse_file(config_file)
     repository_handler = RepositoryHandler.DefaultRepositoryHandler(
-        os.getcwd())
+        cwd=working_directory
+    )
 
     for path, repo_details in parser.repositories.iteritems():
         remote = parser.remotes[repo_details['remote']]
