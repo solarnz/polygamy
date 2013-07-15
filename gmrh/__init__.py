@@ -6,10 +6,10 @@ import RepositoryHandler
 
 def start_func():
     parser = RepoConfigParser.JsonConfigParser()
-    config_file, working_directory = parser.find_config_file(path=os.getcwd())
-    parser.parse_file(config_file)
+    parser.find_config_file(path=os.getcwd())
+    parser.parse_file()
     repository_handler = RepositoryHandler.DefaultRepositoryHandler(
-        cwd=working_directory
+        cwd=parser.working_path
     )
 
     for path, repo_details in parser.repositories.iteritems():
