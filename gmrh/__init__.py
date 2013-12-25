@@ -4,7 +4,7 @@ import RepoConfigParser
 import RepositoryHandler
 
 
-def start_func():
+def main():
     parser = RepoConfigParser.JsonConfigParser()
     parser.find_config_file(path=os.getcwd())
     parser.parse_file()
