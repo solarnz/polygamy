@@ -8,7 +8,6 @@ class DefaultRepositoryHandler():
         self.cwd = cwd or os.getcwd()
 
     def repository_exists(self, path):
-        print os.path.join(self.cwd, path, '.git')
         return os.path.exists(os.path.join(self.cwd, path, '.git'))
 
     def update_repository(self, path, remote_url, remote_branch):
