@@ -53,6 +53,14 @@ class DefaultRepositoryHandler():
                 )
             )
 
+        if remote_change_count and not local_change_count:
+            print "Fast forwarding repository..."
+            subprocess.check_call(
+                ['git', 'merge', '%s/%s' % (remote_name, remote_branch), '--ff-only'],
+                cwd=repository_path
+            )
+
+
     def clone_repository(self, path, remote_url, remote_branch):
         print 'Cloning repository %s ...' % path
         subprocess.check_call(
