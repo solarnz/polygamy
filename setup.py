@@ -12,6 +12,8 @@ setup(
         ]
     },
 
-    author='Christopher Trotman',
-    author_email='chris+gmrh@trotman.io'
+    author='Chris Trotman',
+    author_email='chris+gmrh@trotman.io',
+    description='Easy tool for managing multiple git repositories.',
+    license="BSD",
 )
