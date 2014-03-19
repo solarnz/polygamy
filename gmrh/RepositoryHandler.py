@@ -33,14 +33,16 @@ class DefaultRepositoryHandler():
         )
 
         output = subprocess.check_output(
-            ['git', 'cherry', '%s/%s' % (remote_name, remote_branch), 'HEAD']
-        ).strip()
-        remote_change_count = len(output.split('\n')) - 1
-
-        output = subprocess.check_output(
-            ['git', 'cherry', 'HEAD', '%s/%s' % (remote_name, remote_branch)]
+            ['git', 'cherry', '%s/%s' % (remote_name, remote_branch), 'HEAD'],
+            cwd=repository_path
         ).strip()
         local_change_count = len(output.split('\n')) - 1
+
+        output = subprocess.check_output(
+            ['git', 'cherry', 'HEAD', '%s/%s' % (remote_name, remote_branch)],
+            cwd=repository_path
+        ).strip()
+        remote_change_count = len(output.split('\n')) - 1
 
         if remote_change_count or local_change_count:
             print (
