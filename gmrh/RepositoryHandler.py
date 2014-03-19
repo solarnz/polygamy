@@ -11,7 +11,7 @@ class DefaultRepositoryHandler():
         return os.path.exists(os.path.join(self.cwd, path, '.git'))
 
     def update_repository(self, path, remote_url, remote_branch):
-        print 'Updating repository %s ...' % path
+        print 'Fetching repository %s ...' % path
 
         remote_name = 'origin'
         repository_path = os.path.join(self.cwd, path)
@@ -28,9 +28,28 @@ class DefaultRepositoryHandler():
             )
 
         subprocess.check_call(
-            ['git', 'pull', '--rebase'],
+            ['git', 'fetch', remote_name],
             cwd=repository_path
         )
+
+        output = subprocess.check_output(
+            ['git', 'cherry', '%s/%s' % (remote_name, remote_branch), 'HEAD']
+        ).strip()
+        remote_change_count = len(output.split('\n')) - 1
+
+        output = subprocess.check_output(
+            ['git', 'cherry', 'HEAD', '%s/%s' % (remote_name, remote_branch)]
+        ).strip()
+        local_change_count = len(output.split('\n')) - 1
+
+        if remote_change_count or local_change_count:
+            print (
+                'Branch has %s more commits and %s less commits '
+                'than %s/%s' % (
+                    local_change_count, remote_change_count, remote_name,
+                    remote_branch
+                )
+            )
 
     def clone_repository(self, path, remote_url, remote_branch):
         print 'Cloning repository %s ...' % path
