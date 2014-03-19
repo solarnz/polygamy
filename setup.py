@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='gmrh',
-    version='0.1-dev',
+    version='0.1.1-dev',
     packages=['gmrh'],
     entry_points={
         'console_scripts': [
