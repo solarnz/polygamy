@@ -21,11 +21,7 @@ class DefaultRepositoryHandler():
         remote_name = 'origin'
         repository_path = os.path.join(self.cwd, path)
 
-        url = subprocess.check_output(
-            ['git', 'config', 'remote.%s.url' % remote_name],
-            cwd=repository_path
-        )
-
+        url = git.get_remote_url(repository_path, remote_name)
         if url != remote_url:
             subprocess.check_call(
                 ['git', 'config', 'remote.%s.url' % remote_name, remote_url],

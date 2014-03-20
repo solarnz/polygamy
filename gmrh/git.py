@@ -6,3 +6,11 @@ def clone(cwd, path, remote_url, remote_branch):
             ['git', 'clone', remote_url, '-b',  remote_branch, path],
             cwd=cwd
         )
+
+
+def get_remote_url(path, remote_name):
+    url = subprocess.check_output(
+        ['git', 'config', 'remote.%s.url' % remote_name],
+        cwd=path
+    )
+    return url
