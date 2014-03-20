@@ -1,6 +1,5 @@
 import os
 import os.path
-import subprocess
 
 from blessings import Terminal
 term = Terminal()
@@ -49,13 +48,7 @@ class DefaultRepositoryHandler():
 
         if remote_change_count and not local_change_count:
             print term.green("Fast forwarding repository...")
-            subprocess.check_call(
-                [
-                    'git', 'merge', '%s/%s' % (remote_name, remote_branch),
-                    '--ff-only'
-                ],
-                cwd=repository_path
-            )
+            git.fast_forward(repository_path, remote_name, remote_branch)
 
     def clone_repository(self, path, remote_url, remote_branch):
         print term.green('Cloning repository %s ...' % path)

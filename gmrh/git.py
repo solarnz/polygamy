@@ -49,3 +49,13 @@ def count_different_commits(path, to_reference, from_reference):
     `to_reference`
     """
     return len(calculate_different_commits(path, to_reference, from_reference))
+
+
+def fast_forward(path, remote_name, remote_branch):
+    subprocess.check_call(
+        [
+            'git', 'merge', '%s/%s' % (remote_name, remote_branch),
+            '--ff-only'
+        ],
+        cwd=path
+    )
