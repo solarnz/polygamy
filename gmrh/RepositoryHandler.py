@@ -5,6 +5,8 @@ import subprocess
 from blessings import Terminal
 term = Terminal()
 
+import git
+
 
 class DefaultRepositoryHandler():
     def __init__(self, cwd=None):
@@ -68,10 +70,7 @@ class DefaultRepositoryHandler():
 
     def clone_repository(self, path, remote_url, remote_branch):
         print term.green('Cloning repository %s ...' % path)
-        subprocess.check_call(
-            ['git', 'clone', remote_url, '-b',  remote_branch, path],
-            cwd=self.cwd
-        )
+        git.clone(self.cwd, path, remote_url, remote_branch)
 
     def update_or_clone(self, path, remote_url, remote_branch):
         if self.repository_exists(path):
