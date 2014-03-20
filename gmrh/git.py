@@ -28,3 +28,24 @@ def fetch_remote(path, remote_name):
         ['git', 'fetch', remote_name],
         cwd=path
     )
+
+
+def calculate_different_commits(path, to_reference, from_reference):
+    """ Return the commits in the `from_reference` that are not in
+    `to_reference`
+    """
+    output = subprocess.check_output(
+        ['git', 'cherry', to_reference, from_reference],
+        cwd=path
+    ).strip()
+
+    lines = output.split('\n')
+    # Return those lines that are 'truthy'
+    return filter(None, lines)
+
+
+def count_different_commits(path, to_reference, from_reference):
+    """ Count the commits in the `from_reference` that are not in
+    `to_reference`
+    """
+    return len(calculate_different_commits(path, to_reference, from_reference))

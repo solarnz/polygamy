@@ -27,17 +27,16 @@ class DefaultRepositoryHandler():
 
         git.fetch_remote(repository_path, remote_name)
 
-        output = subprocess.check_output(
-            ['git', 'cherry', '%s/%s' % (remote_name, remote_branch), 'HEAD'],
-            cwd=repository_path
-        ).strip()
-        local_change_count = len(filter(None, output.split('\n')))
-
-        output = subprocess.check_output(
-            ['git', 'cherry', 'HEAD', '%s/%s' % (remote_name, remote_branch)],
-            cwd=repository_path
-        ).strip()
-        remote_change_count = len(filter(None, output.split('\n')))
+        local_change_count = git.count_different_commits(
+            repository_path,
+            '%s/%s' % (remote_name, remote_branch),
+            'HEAD'
+        )
+        remote_change_count = git.count_different_commits(
+            repository_path,
+            'HEAD',
+            '%s/%s' % (remote_name, remote_branch)
+        )
 
         if remote_change_count or local_change_count:
             print (
