@@ -2,6 +2,9 @@ import os
 import os.path
 import subprocess
 
+from blessings import Terminal
+term = Terminal()
+
 
 class DefaultRepositoryHandler():
     def __init__(self, cwd=None):
@@ -36,13 +39,13 @@ class DefaultRepositoryHandler():
             ['git', 'cherry', '%s/%s' % (remote_name, remote_branch), 'HEAD'],
             cwd=repository_path
         ).strip()
-        local_change_count = len(output.split('\n')) - 1
+        local_change_count = len(filter(None, output.split('\n')))
 
         output = subprocess.check_output(
             ['git', 'cherry', 'HEAD', '%s/%s' % (remote_name, remote_branch)],
             cwd=repository_path
         ).strip()
-        remote_change_count = len(output.split('\n')) - 1
+        remote_change_count = len(filter(None, output.split('\n')))
 
         if remote_change_count or local_change_count:
             print (
@@ -54,7 +57,7 @@ class DefaultRepositoryHandler():
             )
 
         if remote_change_count and not local_change_count:
-            print "Fast forwarding repository..."
+            print term.green("Fast forwarding repository...")
             subprocess.check_call(
                 [
                     'git', 'merge', '%s/%s' % (remote_name, remote_branch),
@@ -64,7 +67,7 @@ class DefaultRepositoryHandler():
             )
 
     def clone_repository(self, path, remote_url, remote_branch):
-        print 'Cloning repository %s ...' % path
+        print term.green('Cloning repository %s ...' % path)
         subprocess.check_call(
             ['git', 'clone', remote_url, '-b',  remote_branch, path],
             cwd=self.cwd

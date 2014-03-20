@@ -11,6 +11,9 @@ setup(
             'gmrh = gmrh:main'
         ]
     },
+    install_requires=[
+        'blessings == 1.5.1'
+    ],
 
     author='Chris Trotman',
     author_email='chris+gmrh@trotman.io',
