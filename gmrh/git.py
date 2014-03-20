@@ -14,3 +14,10 @@ def get_remote_url(path, remote_name):
         cwd=path
     )
     return url
+
+
+def set_remote_url(path, remote_name, remote_url):
+    subprocess.check_call(
+        ['git', 'config', 'remote.%s.url' % remote_name, remote_url],
+        cwd=path
+    )
