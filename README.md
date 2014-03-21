@@ -33,7 +33,11 @@ Usage
 
 Licence
 -------
-Copyright (c) 2013, Christopher Trotman
+
+BSD 2-Clause Licensed.
+
+
+Copyright (c) 2014, Christopher Trotman
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
