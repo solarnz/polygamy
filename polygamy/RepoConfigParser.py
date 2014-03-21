@@ -18,13 +18,13 @@ class BaseConfigParser:
         # Search for a .polygamy.josn file within a .polygamy directory
         if os.path.isdir(config_dir) and os.path.isfile(config_dir_file):
             self.config_path = config_dir_file
-            self.working_path = real_path
+            self.working_directory = real_path
             return config_dir_file
 
         # Look or a .polygamy.json file.
         if os.path.isfile(config_file):
             self.config_path = config_file
-            self.working_path = real_path
+            self.working_directory = real_path
             return config_file
 
         # Stop recursively searching when we hit the root directory.
