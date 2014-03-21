@@ -3,12 +3,12 @@
 from setuptools import setup
 
 setup(
-    name='gmrh',
+    name='polygamy',
     version='0.1.1-dev',
-    packages=['gmrh'],
+    packages=['polygamy'],
     entry_points={
         'console_scripts': [
-            'gmrh = gmrh:main'
+            'polygamy = polygamy:main'
         ]
     },
     install_requires=[
@@ -16,7 +16,7 @@ setup(
     ],
 
     author='Chris Trotman',
-    author_email='chris+gmrh@trotman.io',
+    author_email='chris+poly@trotman.io',
     description='Easy tool for managing multiple git repositories.',
     license="BSD",
 )

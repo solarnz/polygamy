@@ -3,7 +3,7 @@ import os.path
 
 
 class BaseConfigParser:
-    CONFIG_DIR = '.gmrh'
+    CONFIG_DIR = '.polygamy'
 
     def parse_file(self):
         pass
@@ -26,7 +26,7 @@ class BaseConfigParser:
 
 
 class JsonConfigParser(BaseConfigParser):
-    CONFIG_FILE = '.gmrh.json'
+    CONFIG_FILE = '.polygamy.json'
 
     def parse_file(self):
         with open(self.config_path) as config_file:
