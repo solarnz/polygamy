@@ -1,16 +1,16 @@
-[![Build Status](https://travis-ci.org/solarnz/gmrh.png?branch=master)](https://travis-ci.org/solarnz/gmrh)[![Stories in Ready](http://badge.waffle.io/solarnz/gmrh.png)](http://waffle.io/solarnz/gmrh)  
-gmrh
+[![Build Status](https://travis-ci.org/solarnz/polygamy.png?branch=master)](https://travis-ci.org/solarnz/polygamy)[![Stories in Ready](http://badge.waffle.io/solarnz/polygamy.png)](http://waffle.io/solarnz/polygamy)  
+polygamy
 ====
 
 A tool to handle the management of multiple git repositories.
 
 Installation
 ------------
-`pip install git+https://github.com/solarnz/gmrh`
+`pip install git+https://github.com/solarnz/polygamy`
 
 Configuration
 -------------
-`.gmrh.json`
+`.polygamy.json`
 ```json
 {
     "remotes": {
@@ -29,7 +29,7 @@ Configuration
 ```
 Usage
 -----
-`gmrh` in the same directory that the .gmrh.json file is in.
+`polygamy` in the same directory that the .polygamy.json file is in.
 
 Licence
 -------
