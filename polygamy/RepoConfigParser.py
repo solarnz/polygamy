@@ -8,21 +8,34 @@ class BaseConfigParser:
     def parse_file(self):
         pass
 
-    def find_config_file(self, path=None):
+    def find_config_file(self, path):
         real_path = os.path.realpath(path)
-        config_path = os.path.join(path, self.CONFIG_FILE)
-        config_dir = os.path.join(path, self.CONFIG_DIR)
-        if os.path.isfile(config_path):
-            self.config_path = config_path
-            self.working_path = real_path
-            if os.path.isdir(config_dir):
-                self.config_dir = config_dir
-            else:
-                self.config_dir = None
 
-        if real_path != '/':
-            new_path = os.path.join(real_path, os.path.pardir)
-            self.find_config_file(new_path)
+        config_file = os.path.join(path, self.CONFIG_FILE)
+        config_dir = os.path.join(path, self.CONFIG_DIR)
+        config_dir_file = os.path.join(config_dir, self.CONFIG_FILE)
+
+        # Search for a .polygamy.josn file within a .polygamy directory
+        if os.path.isdir(config_dir) and os.path.isfile(config_dir_file):
+            self.config_path = config_dir_file
+            self.working_path = real_path
+            return config_dir_file
+
+        # Look or a .polygamy.json file.
+        if os.path.isfile(config_file):
+            self.config_path = config_file
+            self.working_path = real_path
+            return config_file
+
+        # Stop recursively searching when we hit the root directory.
+        if real_path == os.path.realpath(os.path.join(path, os.path.pardir)):
+            # TODO: Better error handling for not finding a config file. Some
+            # kind of wizard for generating a config would be very cool indeed.
+            raise ValueError('Cannot find config file or directory')
+
+        return self.find_config_file(
+            os.path.join(path, os.path.pardir)
+        )
 
 
 class JsonConfigParser(BaseConfigParser):
