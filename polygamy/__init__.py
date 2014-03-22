@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import os
 
-import RepoConfigParser
-import RepositoryHandler
+from . import RepoConfigParser
+from . import RepositoryHandler
 
 
 def main():

@@ -1,10 +1,12 @@
+from __future__ import absolute_import
+
 import os
 import os.path
 
 from blessings import Terminal
 term = Terminal()
 
-import git
+from . import git
 
 
 class GitRepository(object):
@@ -21,7 +23,7 @@ class GitRepository(object):
         )
 
     def update_repository(self):
-        print 'Fetching repository %s ...' % self.name
+        print ('Fetching repository %s ...' % self.name)
 
         url = git.get_remote_url(self.path, self.remote_name)
         if url != self.remote_url:
@@ -50,12 +52,12 @@ class GitRepository(object):
             )
 
         if remote_change_count and not local_change_count:
-            print term.green("Fast forwarding repository...")
+            print (term.green("Fast forwarding repository..."))
             git.fast_forward(self.path, self.remote_name, self.remote_branch)
 
     def clone_repository(self):
-        print term.green('Cloning repository %s ...' % self.name)
-        git.clone(self.cwd, self.path, self.remote_url, self.remote_branch)
+        print (term.green('Cloning repository %s ...' % self.name))
+        git.clone(self.path, self.remote_url, self.remote_branch)
 
     def update_or_clone(self):
         if self.repository_exists():
@@ -73,16 +75,16 @@ class GitRepositoryHandler(object):
 
         # Determine the default remote
         default_remote_name = None
-        for name, settings in remotes.iteritems():
+        for name, settings in remotes.items():
             if settings.get('default', False):
                 default_remote_name = name
                 break
         else:
             if len(remotes) == 1:
-                default_remote_name = remotes.keys()[0]
+                default_remote_name = list(remotes.keys())[0]
 
         # Load the repositories
-        for path, repo_details in config.repositories.iteritems():
+        for path, repo_details in config.repositories.items():
             remote_name = repo_details.get('remote', default_remote_name)
             if not remote_name:
                 raise ValueError(
