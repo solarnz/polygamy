@@ -23,7 +23,7 @@ class GitRepository(object):
         )
 
     def update_repository(self):
-        print ('Fetching repository %s ...' % self.name)
+        print('Fetching repository %s ...' % self.name)
 
         url = git.get_remote_url(self.path, self.remote_name)
         if url != self.remote_url:
@@ -43,7 +43,7 @@ class GitRepository(object):
         )
 
         if remote_change_count or local_change_count:
-            print (
+            print(
                 'Branch has %s more commits and %s less commits '
                 'than %s/%s' % (
                     local_change_count, remote_change_count, self.remote_name,
@@ -52,11 +52,11 @@ class GitRepository(object):
             )
 
         if remote_change_count and not local_change_count:
-            print (term.green("Fast forwarding repository..."))
+            print(term.green("Fast forwarding repository..."))
             git.fast_forward(self.path, self.remote_name, self.remote_branch)
 
     def clone_repository(self):
-        print (term.green('Cloning repository %s ...' % self.name))
+        print(term.green('Cloning repository %s ...' % self.name))
         git.clone(self.path, self.remote_url, self.remote_branch)
 
     def update_or_clone(self):
