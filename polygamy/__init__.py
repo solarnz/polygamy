@@ -61,6 +61,19 @@ def main():
     )
     fetch_parser.set_defaults(action='fetch')
 
+    # List action
+    list_action = sub_parsers.add_parser(
+        'list',
+        help="Lists the repositories under control by polygamy."
+    )
+    list_action.add_argument(
+        '-s', '--seperator',
+        default='\n',
+        help=("String to seperate the repositories with. Defaults to a new"
+              " line.")
+    )
+    list_action.set_defaults(action='list')
+
     args = config_parser.parse_args()
 
     if args.action == 'init':
@@ -80,3 +93,5 @@ def main():
         repository_handler.status()
     elif args.action == 'fetch':
         repository_handler.fetch()
+    elif args.action == 'list':
+        repository_handler.list(args.seperator)
