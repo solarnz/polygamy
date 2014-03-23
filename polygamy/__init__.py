@@ -72,6 +72,11 @@ def main():
         help=("String to seperate the repositories with. Defaults to a new"
               " line.")
     )
+    list_action.add_argument(
+        '-l', '--local-only',
+        action='store_true',
+        help=("Only list repositories that have local changes.")
+    )
     list_action.set_defaults(action='list')
 
     args = config_parser.parse_args()
@@ -94,4 +99,4 @@ def main():
     elif args.action == 'fetch':
         repository_handler.fetch()
     elif args.action == 'list':
-        repository_handler.list(args.seperator)
+        repository_handler.list(args.seperator, args.local_only)

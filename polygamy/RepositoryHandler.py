@@ -38,16 +38,8 @@ class GitRepository(object):
 
         git.fetch_remote(self.path, self.remote_name)
 
-        local_change_count = git.count_different_commits(
-            self.path,
-            '%s/%s' % (self.remote_name, self.remote_branch),
-            'HEAD'
-        )
-        remote_change_count = git.count_different_commits(
-            self.path,
-            'HEAD',
-            '%s/%s' % (self.remote_name, self.remote_branch)
-        )
+        local_change_count = self.local_change_count()
+        remote_change_count = self.remote_change_count()
 
         if remote_change_count or local_change_count:
             print(
@@ -74,6 +66,22 @@ class GitRepository(object):
         if self.repository_exists():
             git.fetch_remote(self.path, self.remote_name)
 
+    def local_change_count(self):
+        local_change_count = git.count_different_commits(
+            self.path,
+            '%s/%s' % (self.remote_name, self.remote_branch),
+            'HEAD'
+        )
+        return local_change_count
+
+    def remote_change_count(self):
+        remote_change_count = git.count_different_commits(
+            self.path,
+            'HEAD',
+            '%s/%s' % (self.remote_name, self.remote_branch)
+        )
+        return remote_change_count
+
     def update_or_clone(self, dry_run):
         if self.repository_exists():
             self.update_repository(dry_run)
@@ -86,16 +94,8 @@ class GitRepository(object):
             self.clone_repository()
 
     def status(self):
-        local_change_count = git.count_different_commits(
-            self.path,
-            '%s/%s' % (self.remote_name, self.remote_branch),
-            'HEAD'
-        )
-        remote_change_count = git.count_different_commits(
-            self.path,
-            'HEAD',
-            '%s/%s' % (self.remote_name, self.remote_branch)
-        )
+        local_change_count = self.local_change_count()
+        remote_change_count = self.remote_change_count()
         branch = git.get_current_branch(self.path)
         return {
             'branch': branch,
@@ -158,8 +158,13 @@ class GitRepositoryHandler(object):
         for repo in self.repositories:
             repo.fetch()
 
-    def list(self, seperator):
-        print(seperator.join([r.name for r in self.repositories]))
+    def list(self, seperator, local_changes_only):
+        repo_names = []
+        for repo in self.repositories:
+            if not local_changes_only or repo.local_change_count():
+                repo_names.append(repo.name)
+
+        print(seperator.join(repo_names))
 
     def status(self):
         statuses = []
