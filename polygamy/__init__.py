@@ -35,6 +35,12 @@ def main():
         'pull',
         help="Update your local repositories"
     )
+    pull_parser.add_argument(
+        '-n', '--dry-run', action='store_true',
+        help=("Run in dry run mode. Remoted will be fetched, but"
+              " configuration will not be updated, and branches will not be"
+              " fast forwarded.")
+    )
     pull_parser.set_defaults(action='pull')
 
     args = config_parser.parse_args()
@@ -46,7 +52,8 @@ def main():
     parser.find_config_file(path=os.getcwd())
     parser.parse_file()
     repository_handler = RepositoryHandler.GitRepositoryHandler(
-        config=parser
+        config=parser,
+        dry_run=getattr(args, 'dry_run', False)
     )
 
     if args.action in ('pull', 'init'):

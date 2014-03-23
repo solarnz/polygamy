@@ -22,11 +22,17 @@ class GitRepository(object):
             os.path.join(self.path, '.git')
         )
 
-    def update_repository(self):
+    def update_repository(self, dry_run):
         print('Fetching repository %s ...' % self.name)
 
         url = git.get_remote_url(self.path, self.remote_name)
-        if url != self.remote_url:
+        if url.strip() != self.remote_url.strip():
+            if dry_run:
+                print(term.red(
+                    'Remote url for %s is incorrect, will update it.' %
+                    self.name
+                ))
+                return
             git.set_remote_url(self.path, self.remote_name, self.remote_url)
 
         git.fetch_remote(self.path, self.remote_name)
@@ -52,6 +58,10 @@ class GitRepository(object):
             )
 
         if remote_change_count and not local_change_count:
+            if dry_run:
+                print(term.red('Would attempt to fastforward %s.' % self.name))
+                return
+
             print(term.green("Fast forwarding repository..."))
             git.fast_forward(self.path, self.remote_name, self.remote_branch)
 
@@ -59,16 +69,23 @@ class GitRepository(object):
         print(term.green('Cloning repository %s ...' % self.name))
         git.clone(self.path, self.remote_url, self.remote_branch)
 
-    def update_or_clone(self):
+    def update_or_clone(self, dry_run):
         if self.repository_exists():
-            self.update_repository()
+            self.update_repository(dry_run)
         else:
+            if dry_run:
+                print(term.red(
+                    "Repo %s doesn't exist, will create it." % self.name
+                ))
+                return
             self.clone_repository()
 
 
 class GitRepositoryHandler(object):
-    def __init__(self, config):
+    def __init__(self, config, dry_run):
         self.config = config
+        self.dry_run = dry_run
+
         remotes = config.remotes
 
         self.repositories = []
@@ -112,4 +129,4 @@ class GitRepositoryHandler(object):
 
     def update_repositories(self):
         for repo in self.repositories:
-            repo.update_or_clone()
+            repo.update_or_clone(self.dry_run)
