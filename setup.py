@@ -12,7 +12,8 @@ setup(
         ]
     },
     install_requires=[
-        'blessings == 1.5.1'
+        'blessings == 1.5.1',
+        'tabulate == 0.7.2',
     ],
 
     author='Chris Trotman',

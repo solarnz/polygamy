@@ -14,7 +14,15 @@ def get_remote_url(path, remote_name):
         ['git', 'config', 'remote.%s.url' % remote_name],
         cwd=path
     )
-    return url
+    return url.strip()
+
+
+def get_current_branch(path):
+    branch = subprocess.check_output(
+        ['git', 'symbolic-ref', '--short', 'HEAD'],
+        cwd=path
+    )
+    return branch.strip()
 
 
 def set_remote_url(path, remote_name, remote_url):

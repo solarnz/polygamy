@@ -43,6 +43,15 @@ def main():
     )
     pull_parser.set_defaults(action='pull')
 
+    # Status action
+    status_parser = sub_parsers.add_parser(
+        'status',
+        help=("Shows the current status of your repositories. Included the"
+              " branch you're on, the number of commits you're head of the"
+              " default remote branch, and how many commits you are behind.")
+    )
+    status_parser.set_defaults(action='status')
+
     args = config_parser.parse_args()
 
     if args.action == 'init':
@@ -58,3 +67,5 @@ def main():
 
     if args.action in ('pull', 'init'):
         repository_handler.update_repositories()
+    elif args.action == 'status':
+        repository_handler.status()

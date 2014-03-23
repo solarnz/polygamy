@@ -5,6 +5,7 @@ import os.path
 
 from blessings import Terminal
 term = Terminal()
+import tabulate
 
 from . import git
 
@@ -80,6 +81,24 @@ class GitRepository(object):
                 return
             self.clone_repository()
 
+    def status(self):
+        local_change_count = git.count_different_commits(
+            self.path,
+            '%s/%s' % (self.remote_name, self.remote_branch),
+            'HEAD'
+        )
+        remote_change_count = git.count_different_commits(
+            self.path,
+            'HEAD',
+            '%s/%s' % (self.remote_name, self.remote_branch)
+        )
+        branch = git.get_current_branch(self.path)
+        return {
+            'branch': branch,
+            'local_change_count': local_change_count,
+            'remote_change_count': remote_change_count,
+        }
+
 
 class GitRepositoryHandler(object):
     def __init__(self, config, dry_run):
@@ -130,3 +149,20 @@ class GitRepositoryHandler(object):
     def update_repositories(self):
         for repo in self.repositories:
             repo.update_or_clone(self.dry_run)
+
+    def status(self):
+        statuses = []
+        for repo in self.repositories:
+            status = repo.status()
+            statuses.append([
+                repo.name,
+                status['branch'],
+                status['local_change_count'],
+                status['remote_change_count']
+            ])
+
+        print(tabulate.tabulate(
+            statuses,
+            headers=['Repo', 'Branch', 'Local Changes', 'Remote Changes'],
+            tablefmt='simple'
+        ))
