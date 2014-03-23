@@ -52,6 +52,15 @@ def main():
     )
     status_parser.set_defaults(action='status')
 
+    # Fetch action
+    fetch_parser = sub_parsers.add_parser(
+        'fetch',
+        help=("Fetches changes from the remote repository. This will not"
+              " clone new repositories, or fast-forward exsiting"
+              " repositories.")
+    )
+    fetch_parser.set_defaults(action='fetch')
+
     args = config_parser.parse_args()
 
     if args.action == 'init':
@@ -69,3 +78,5 @@ def main():
         repository_handler.update_repositories()
     elif args.action == 'status':
         repository_handler.status()
+    elif args.action == 'fetch':
+        repository_handler.fetch()

@@ -70,6 +70,10 @@ class GitRepository(object):
         print(term.green('Cloning repository %s ...' % self.name))
         git.clone(self.path, self.remote_url, self.remote_branch)
 
+    def fetch(self):
+        if self.repository_exists():
+            git.fetch_remote(self.path, self.remote_name)
+
     def update_or_clone(self, dry_run):
         if self.repository_exists():
             self.update_repository(dry_run)
@@ -149,6 +153,10 @@ class GitRepositoryHandler(object):
     def update_repositories(self):
         for repo in self.repositories:
             repo.update_or_clone(self.dry_run)
+
+    def fetch(self):
+        for repo in self.repositories:
+            repo.fetch()
 
     def status(self):
         statuses = []
