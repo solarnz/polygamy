@@ -159,7 +159,7 @@ class GitRepositoryHandler(object):
             repo.fetch()
 
     def list(self, seperator):
-        print seperator.join([r.name for r in self.repositories])
+        print(seperator.join([r.name for r in self.repositories]))
 
     def status(self):
         statuses = []
