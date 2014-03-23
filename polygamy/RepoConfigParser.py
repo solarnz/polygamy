@@ -17,11 +17,14 @@ class BaseConfigParser:
         config_dir = os.path.join(path, self.CONFIG_DIR)
         config_dir_file = os.path.join(config_dir, self.CONFIG_FILE)
 
-        # Search for a .polygamy.josn file within a .polygamy directory
-        if os.path.isdir(config_dir) and os.path.isfile(config_dir_file):
-            self.config_path = config_dir_file
-            self.working_directory = real_path
-            return config_dir_file
+        # Search for a config file within a .polygamy directory
+        if os.path.isdir(config_dir):
+            for f in (self.CONFIG_FILE, self.DIR_CONFIG_FILE):
+                config_dir_file = os.path.join(config_dir, f)
+                if os.path.isfile(config_dir_file):
+                    self.config_path = config_dir_file
+                    self.working_directory = real_path
+                    return config_dir_file
 
         # Look or a .polygamy.json file.
         if os.path.isfile(config_file):
@@ -42,6 +45,7 @@ class BaseConfigParser:
 
 class JsonConfigParser(BaseConfigParser):
     CONFIG_FILE = '.polygamy.json'
+    DIR_CONFIG_FILE = 'polygamy.json'
 
     def parse_file(self):
         with open(self.config_path) as config_file:
