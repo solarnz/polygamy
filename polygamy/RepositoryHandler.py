@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import math
 import os
 import os.path
 
@@ -186,7 +187,9 @@ class GitRepositoryHandler(object):
     def list(self, seperator, local_changes_only):
         repo_names = []
         for repo in self.repositories:
-            if not local_changes_only or repo.local_change_count():
+            change_count = repo.local_change_count()
+            if not local_changes_only or (change_count and
+                                          not math.isnan(change_count)):
                 repo_names.append(repo.name)
 
         print(seperator.join(repo_names))
