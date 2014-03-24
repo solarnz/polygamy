@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import os
 import subprocess
 
 
@@ -47,6 +48,7 @@ def get_current_branch(path):
     try:
         branch = subprocess.check_output(
             ['git', 'symbolic-ref', '--short', 'HEAD'],
+            stderr=open(os.devnull, 'w'),
             cwd=path
         )
         return branch.strip()
@@ -87,10 +89,17 @@ def calculate_different_commits(path, to_reference, from_reference):
     """ Return the commits in the `from_reference` that are not in
     `to_reference`
     """
-    output = subprocess.check_output(
-        ['git', 'cherry', to_reference, from_reference],
-        cwd=path
-    ).strip()
+    try:
+        output = subprocess.check_output(
+            ['git', 'cherry', to_reference, from_reference],
+            stderr=open(os.devnull, 'w'),
+            cwd=path
+        ).strip()
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            return None
+        else:
+            raise
 
     lines = output.split('\n')
     # Return those lines that are 'truthy'
@@ -101,7 +110,10 @@ def count_different_commits(path, to_reference, from_reference):
     """ Count the commits in the `from_reference` that are not in
     `to_reference`
     """
-    return len(calculate_different_commits(path, to_reference, from_reference))
+    diff = calculate_different_commits(path, to_reference, from_reference)
+    if diff is None:
+        return float('nan')
+    return len(diff)
 
 
 def fast_forward(path, remote_name, remote_branch):
