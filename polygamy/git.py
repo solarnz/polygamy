@@ -8,9 +8,16 @@ class NoSuchRemote(Exception):
 
 
 def clone(path, remote_url, remote_branch):
+    try:
         subprocess.check_call(
             ['git', 'clone', remote_url, '-b',  remote_branch, path],
         )
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            return False
+        else:
+            raise
+    return True
 
 
 def get_remote_url(path, remote_name):
@@ -63,10 +70,17 @@ def set_remote_url(path, remote_name, remote_url):
 
 
 def fetch_remote(path, remote_name):
-    subprocess.check_call(
-        ['git', 'fetch', remote_name],
-        cwd=path
-    )
+    try:
+        subprocess.check_call(
+            ['git', 'fetch', remote_name],
+            cwd=path
+        )
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            return False
+        else:
+            raise
+    return True
 
 
 def calculate_different_commits(path, to_reference, from_reference):

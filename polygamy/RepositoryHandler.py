@@ -48,8 +48,10 @@ class GitRepository(object):
                 return
             git.set_remote_url(self.path, self.remote_name, self.remote_url)
 
-        git.fetch_remote(self.path, self.remote_name)
-
+        if not git.fetch_remote(self.path, self.remote_name):
+            print(term.red("Unable to fetch %s in %s." % (self.remote_name,
+                                                          self.path)))
+            return
         local_change_count = self.local_change_count()
         remote_change_count = self.remote_change_count()
 
@@ -76,7 +78,9 @@ class GitRepository(object):
 
     def fetch(self):
         if self.repository_exists():
-            git.fetch_remote(self.path, self.remote_name)
+            if not git.fetch_remote(self.path, self.remote_name):
+                print(term.red("Unable to fetch %s in %s." % (self.remote_name,
+                                                              self.path)))
 
     def local_change_count(self):
         local_change_count = git.count_different_commits(
@@ -103,7 +107,12 @@ class GitRepository(object):
                     "Repo %s doesn't exist, will create it." % self.name
                 ))
                 return
-            self.clone_repository()
+            if not self.clone_repository():
+                print(term.red(
+                    "Unable to clone %s with remote %s." % (
+                        self.path, self.remote_name
+                    )
+                ))
 
     def status(self):
         local_change_count = self.local_change_count()
