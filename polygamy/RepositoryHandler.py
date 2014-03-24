@@ -168,7 +168,7 @@ class GitRepositoryHandler(object):
 
     def status(self):
         statuses = []
-        for repo in self.repositories:
+        for repo in sorted(self.repositories, key=lambda r: r.name):
             status = repo.status()
             statuses.append([
                 repo.name,
