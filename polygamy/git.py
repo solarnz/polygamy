@@ -64,6 +64,22 @@ def get_current_branch(path):
     return commit_hash.strip()
 
 
+def is_on_branch(path):
+    try:
+        subprocess.check_output(
+            ['git', 'symbolic-ref', '--short', 'HEAD'],
+            stderr=open(os.devnull, 'w'),
+            cwd=path
+        )
+        return True
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            return False
+        else:
+            raise
+    return False
+
+
 def set_remote_url(path, remote_name, remote_url):
     subprocess.check_call(
         ['git', 'config', 'remote.%s.url' % remote_name, remote_url],

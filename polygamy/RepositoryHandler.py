@@ -69,7 +69,8 @@ class GitRepository(object):
                 )
             )
 
-        if remote_change_count and not local_change_count:
+        if (remote_change_count and not local_change_count and
+                git.is_on_branch(self.path)):
             if dry_run:
                 print(term.red('Would attempt to fastforward %s.' % self.name))
                 return
