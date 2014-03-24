@@ -23,9 +23,7 @@ class GitRepository(object):
             os.path.join(self.path, '.git')
         )
 
-    def update_repository(self, dry_run):
-        print('Fetching repository %s ...' % self.name)
-
+    def update_remote(self, dry_run):
         try:
             url = git.get_remote_url(self.path, self.remote_name)
         except git.NoSuchRemote:
@@ -35,7 +33,7 @@ class GitRepository(object):
                         self.remote_name, self.path
                     )
                 ))
-                return
+                return False
             git.add_remote(self.path, self.remote_name, self.remote_url)
             url = self.remote_url
 
@@ -45,13 +43,19 @@ class GitRepository(object):
                     'Remote url for %s is incorrect, will update it.' %
                     self.name
                 ))
-                return
+                return False
             git.set_remote_url(self.path, self.remote_name, self.remote_url)
+        return True
 
-        if not git.fetch_remote(self.path, self.remote_name):
-            print(term.red("Unable to fetch %s in %s." % (self.remote_name,
-                                                          self.path)))
+    def update_repository(self, dry_run):
+        print('Fetching repository %s ...' % self.name)
+
+        if not self.update_remote(dry_run):
             return
+
+        if not self.fetch():
+            return
+
         local_change_count = self.local_change_count()
         remote_change_count = self.remote_change_count()
 
@@ -81,6 +85,9 @@ class GitRepository(object):
             if not git.fetch_remote(self.path, self.remote_name):
                 print(term.red("Unable to fetch %s in %s." % (self.remote_name,
                                                               self.path)))
+                return False
+            return True
+        return False
 
     def local_change_count(self):
         local_change_count = git.count_different_commits(
