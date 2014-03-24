@@ -18,11 +18,22 @@ def get_remote_url(path, remote_name):
 
 
 def get_current_branch(path):
-    branch = subprocess.check_output(
-        ['git', 'symbolic-ref', '--short', 'HEAD'],
+    try:
+        branch = subprocess.check_output(
+            ['git', 'symbolic-ref', '--short', 'HEAD'],
+            cwd=path
+        )
+        return branch.strip()
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            pass
+        else:
+            raise
+    commit_hash = subprocess.check_output(
+        ['git', 'rev-parse', '--short', 'HEAD'],
         cwd=path
     )
-    return branch.strip()
+    return commit_hash.strip()
 
 
 def set_remote_url(path, remote_name, remote_url):
