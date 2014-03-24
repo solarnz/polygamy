@@ -3,6 +3,10 @@ from __future__ import absolute_import
 import subprocess
 
 
+class NoSuchRemote(Exception):
+    pass
+
+
 def clone(path, remote_url, remote_branch):
         subprocess.check_call(
             ['git', 'clone', remote_url, '-b',  remote_branch, path],
@@ -10,11 +14,26 @@ def clone(path, remote_url, remote_branch):
 
 
 def get_remote_url(path, remote_name):
+    remotes = subprocess.check_output(
+        ['git', 'remote'],
+        cwd=path
+    ).strip().split('\n')
+
+    if remote_name not in remotes:
+        raise NoSuchRemote()
+
     url = subprocess.check_output(
         ['git', 'config', 'remote.%s.url' % remote_name],
         cwd=path
     )
     return url.strip()
+
+
+def add_remote(path, remote_name, remote_url):
+    subprocess.check_output(
+        ['git', 'remote', 'add', remote_name, remote_url],
+        cwd=path
+    )
 
 
 def get_current_branch(path):

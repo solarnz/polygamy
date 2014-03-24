@@ -26,7 +26,19 @@ class GitRepository(object):
     def update_repository(self, dry_run):
         print('Fetching repository %s ...' % self.name)
 
-        url = git.get_remote_url(self.path, self.remote_name)
+        try:
+            url = git.get_remote_url(self.path, self.remote_name)
+        except git.NoSuchRemote:
+            if dry_run:
+                print(term.red(
+                    'Would add remote %s for %s.' % (
+                        self.remote_name, self.path
+                    )
+                ))
+                return
+            git.add_remote(self.path, self.remote_name, self.remote_url)
+            url = self.remote_url
+
         if url.strip() != self.remote_url.strip():
             if dry_run:
                 print(term.red(
@@ -141,10 +153,7 @@ class GitRepositoryHandler(object):
                 path=os.path.realpath(
                     os.path.join(config.working_directory, path)
                 ),
-                # TODO: Proper updating of the remotes if the remote is not
-                # already set.
-                #remote_name=remote_name,
-                remote_name='origin',
+                remote_name=remote_name,
                 remote_url=remote_url,
                 remote_branch=remote_branch,
             )
