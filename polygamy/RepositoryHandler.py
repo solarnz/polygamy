@@ -133,6 +133,10 @@ class GitRepository(object):
             'remote_change_count': remote_change_count,
         }
 
+    def push(self):
+        current_branch = git.get_proper_current_branch(self.path)
+        git.push(self.path, self.remote_name, current_branch, current_branch)
+
 
 class GitRepositoryHandler(object):
     def __init__(self, config, dry_run):
@@ -141,7 +145,7 @@ class GitRepositoryHandler(object):
 
         remotes = config.remotes
 
-        self.repositories = []
+        self.repositories = {}
 
         # Determine the default remote
         default_remote_name = None
@@ -175,19 +179,19 @@ class GitRepositoryHandler(object):
                 remote_url=remote_url,
                 remote_branch=remote_branch,
             )
-            self.repositories.append(repo)
+            self.repositories[path] = repo
 
     def update_repositories(self):
-        for repo in self.repositories:
+        for repo in self.repositories.values():
             repo.update_or_clone(self.dry_run)
 
     def fetch(self):
-        for repo in self.repositories:
+        for repo in self.repositories.values():
             repo.fetch()
 
     def list(self, seperator, local_changes_only):
         repo_names = []
-        for repo in self.repositories:
+        for repo in self.repositories.values():
             change_count = repo.local_change_count()
             if not local_changes_only or (change_count and
                                           not math.isnan(change_count)):
@@ -197,7 +201,7 @@ class GitRepositoryHandler(object):
 
     def status(self):
         statuses = []
-        for repo in sorted(self.repositories, key=lambda r: r.name):
+        for repo in sorted(self.repositories.values(), key=lambda r: r.name):
             status = repo.status()
             statuses.append([
                 repo.name,
@@ -211,3 +215,7 @@ class GitRepositoryHandler(object):
             headers=['Repo', 'Branch', 'Local Changes', 'Remote Changes'],
             tablefmt='simple'
         ))
+
+    def push(self, repositories):
+        for repository in repositories:
+            self.repositories[repository].push()

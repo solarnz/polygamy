@@ -79,6 +79,21 @@ def main():
     )
     list_action.set_defaults(action='list')
 
+    # List action
+    push_action = sub_parsers.add_parser(
+        'push',
+        help=("Pushes the current branch to the remote. Note: this does a"
+              " simple push. I.e the local branch name will be the branch"
+              " that will be pushed to on the remote.")
+    )
+    push_action.add_argument(
+        'repositories',
+        type=str,
+        nargs='+',
+        help="The repositories to push."
+    )
+    push_action.set_defaults(action='push')
+
     args = config_parser.parse_args()
 
     if args.action == 'init':
@@ -100,3 +115,5 @@ def main():
         repository_handler.fetch()
     elif args.action == 'list':
         repository_handler.list(args.seperator, args.local_only)
+    elif args.action == 'push':
+        repository_handler.push(args.repositories)

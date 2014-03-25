@@ -65,19 +65,19 @@ def get_current_branch(path):
 
 
 def is_on_branch(path):
+    return get_proper_current_branch(path) is not None
+
+
+def get_proper_current_branch(path):
     try:
-        subprocess.check_output(
+        return subprocess.check_output(
             ['git', 'symbolic-ref', '--short', 'HEAD'],
             stderr=open(os.devnull, 'w'),
             cwd=path
-        )
-        return True
-    except subprocess.CalledProcessError as e:
-        if e.returncode == 128:
-            return False
-        else:
-            raise
-    return False
+        ).strip()
+    except subprocess.CalledProcessError:
+        pass
+    return None
 
 
 def set_remote_url(path, remote_name, remote_url):
@@ -138,5 +138,11 @@ def fast_forward(path, remote_name, remote_branch):
             'git', 'merge', '%s/%s' % (remote_name, remote_branch),
             '--ff-only'
         ],
+        cwd=path
+    )
+
+def push(path, remote_name, local_branch, remote_branch):
+    subprocess.check_call(
+        ['git', 'push', remote_name, '%s:%s' % (local_branch, remote_branch)],
         cwd=path
     )
