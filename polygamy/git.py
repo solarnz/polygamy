@@ -141,6 +141,7 @@ def fast_forward(path, remote_name, remote_branch):
         cwd=path
     )
 
+
 def push(path, remote_name, local_branch, remote_branch):
     subprocess.check_call(
         ['git', 'push', remote_name, '%s:%s' % (local_branch, remote_branch)],
