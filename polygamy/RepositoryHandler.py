@@ -77,6 +77,11 @@ class GitRepository(object):
 
             print(term.green("Fast forwarding repository..."))
             git.fast_forward(self.path, self.remote_name, self.remote_branch)
+        elif remote_change_count:
+            print(term.red(
+                'Not fastforwarding %s. Branch has %s local changes.' %
+                (self.name, local_change_count)
+            ))
 
     def clone_repository(self):
         print(term.green('Cloning repository %s ...' % self.name))
