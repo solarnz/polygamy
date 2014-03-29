@@ -9,6 +9,7 @@ term = Terminal()
 import tabulate
 
 from .git import git
+from .base_git import NoSuchRemote
 
 
 class GitRepository(object):
@@ -27,7 +28,7 @@ class GitRepository(object):
     def update_remote(self, dry_run):
         try:
             url = git.get_remote_url(self.path, self.remote_name)
-        except git.NoSuchRemote:
+        except NoSuchRemote:
             if dry_run:
                 print(term.red(
                     'Would add remote %s for %s.' % (
