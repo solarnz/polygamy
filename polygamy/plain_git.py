@@ -8,10 +8,13 @@ from .base_git import (BaseGit, NoSuchRemote)
 
 class PlainGit(BaseGit):
     @staticmethod
-    def clone(path, remote_url, remote_branch):
+    def clone(path, remote_url, remote_branch, remote_name='origin'):
         try:
             subprocess.check_call(
-                ['git', 'clone', remote_url, '-b',  remote_branch, path],
+                [
+                    'git', 'clone', remote_url, '-b',  remote_branch, '-o',
+                    remote_name, path
+                ],
             )
         except subprocess.CalledProcessError as e:
             if e.returncode == 128:
