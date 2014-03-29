@@ -6,9 +6,9 @@ import os
 from blessings import Terminal
 term = Terminal()
 
-from . import git
 from . import RepoConfigParser
 from . import RepositoryHandler
+from .git import git
 
 
 def main():

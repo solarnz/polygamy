@@ -8,7 +8,7 @@ from blessings import Terminal
 term = Terminal()
 import tabulate
 
-from . import git
+from .git import git
 
 
 class GitRepository(object):
