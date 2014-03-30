@@ -6,4 +6,8 @@ from .plain_git import PlainGit
 
 
 class Pygit2Git(PlainGit):
-    pass
+    @staticmethod
+    def is_on_branch(path):
+        repo = pygit2.Repository(path)
+
+        return not (repo.head_is_detached or repo.head_is_unborn)
