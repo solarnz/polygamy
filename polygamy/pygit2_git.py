@@ -8,6 +8,14 @@ from .plain_git import PlainGit
 
 class Pygit2Git(PlainGit):
     @staticmethod
+    def _find_remote(repo, remote_name):
+        for remote in repo.remotes:
+            if remote.name == remote_name:
+                return remote
+        else:
+            raise NoSuchRemote()
+
+    @staticmethod
     def is_on_branch(path):
         repo = pygit2.Repository(path)
 
@@ -16,12 +24,7 @@ class Pygit2Git(PlainGit):
     @staticmethod
     def get_remote_url(path, remote_name):
         repo = pygit2.Repository(path)
-
-        for remote in repo.remotes:
-            if remote.name == remote_name:
-                break
-        else:
-            raise NoSuchRemote()
+        remote = Pygit2Git._find_remote(repo, remote_name)
 
         return remote.url
 
@@ -29,3 +32,10 @@ class Pygit2Git(PlainGit):
     def add_remote(path, remote_name, remote_url):
         repo = pygit2.Repository(path)
         repo.create_remote(remote_name, remote_url)
+
+    @staticmethod
+    def set_remote_url(path, remote_name, remote_url):
+        repo = pygit2.Repository(path)
+        remote = Pygit2Git._find_remote(repo, remote_name)
+        remote.url = remote_url
+        remote.save()
