@@ -39,3 +39,14 @@ class Pygit2Git(PlainGit):
         remote = Pygit2Git._find_remote(repo, remote_name)
         remote.url = remote_url
         remote.save()
+
+    @staticmethod
+    def get_current_branch(path):
+        repo = pygit2.Repository(path)
+        if repo.head_is_unborn:
+            return PlainGit.get_current_branch(path)
+
+        if repo.head_is_detached:
+            return str(repo.head.target)
+
+        return str(repo.head.shorthand)
