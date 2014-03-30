@@ -24,3 +24,8 @@ class Pygit2Git(PlainGit):
             raise NoSuchRemote()
 
         return remote.url
+
+    @staticmethod
+    def add_remote(path, remote_name, remote_url):
+        repo = pygit2.Repository(path)
+        repo.create_remote(remote_name, remote_url)
