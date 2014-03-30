@@ -49,4 +49,11 @@ class Pygit2Git(PlainGit):
         if repo.head_is_detached:
             return str(repo.head.target)
 
-        return str(repo.head.shorthand)
+        return repo.head.shorthand
+
+    @staticmethod
+    def get_proper_current_branch(path):
+        repo = pygit2.Repository(path)
+        if repo.head_is_detached or repo.head_is_unborn:
+            return None
+        return repo.head.shorthand
