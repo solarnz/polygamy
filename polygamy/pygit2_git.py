@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import pygit2
 
+from .base_git import NoSuchRemote
 from .plain_git import PlainGit
 
 
@@ -11,3 +12,15 @@ class Pygit2Git(PlainGit):
         repo = pygit2.Repository(path)
 
         return not (repo.head_is_detached or repo.head_is_unborn)
+
+    @staticmethod
+    def get_remote_url(path, remote_name):
+        repo = pygit2.Repository(path)
+
+        for remote in repo.remotes:
+            if remote.name == remote_name:
+                break
+        else:
+            raise NoSuchRemote()
+
+        return remote.url
