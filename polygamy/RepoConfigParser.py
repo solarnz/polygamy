@@ -3,6 +3,9 @@ from __future__ import absolute_import
 import json
 import os.path
 
+from blessings import Terminal
+term = Terminal()
+
 
 class BaseConfigParser:
     CONFIG_DIR = '.polygamy'
@@ -13,24 +16,31 @@ class BaseConfigParser:
     def find_config_file(self, path):
         real_path = os.path.realpath(path)
 
-        config_file = os.path.join(path, self.CONFIG_FILE)
         config_dir = os.path.join(path, self.CONFIG_DIR)
-        config_dir_file = os.path.join(config_dir, self.CONFIG_FILE)
+        config_dir_file = os.path.join(
+            config_dir, 'polygamy', self.CONFIG_FILE
+        )
 
         # Search for a config file within a .polygamy directory
         if os.path.isdir(config_dir):
-            for f in (self.CONFIG_FILE, self.DIR_CONFIG_FILE):
-                config_dir_file = os.path.join(config_dir, f)
-                if os.path.isfile(config_dir_file):
-                    self.config_path = config_dir_file
-                    self.working_directory = real_path
-                    return config_dir_file
+            if not os.path.isdir(os.path.join(config_dir, 'polygamy')):
+                print(term.red(
+                    "Found polygamy directory %s, but not a config"
+                    " repository." % config_dir
+                ))
+                raise Exception()
 
-        # Look or a .polygamy.json file.
-        if os.path.isfile(config_file):
-            self.config_path = config_file
+            if not os.path.isfile(config_dir_file):
+                print(term.red(
+                    "Found polygamy directory %s, but not a config file." %
+                    config_dir
+                ))
+                raise Exception()
+
+            self.config_path = config_dir_file
             self.working_directory = real_path
-            return config_file
+            self.config_dir = config_dir
+            return config_dir_file
 
         # Stop recursively searching when we hit the root directory.
         if real_path == os.path.realpath(os.path.join(path, os.path.pardir)):
@@ -44,8 +54,7 @@ class BaseConfigParser:
 
 
 class JsonConfigParser(BaseConfigParser):
-    CONFIG_FILE = '.polygamy.json'
-    DIR_CONFIG_FILE = 'polygamy.json'
+    CONFIG_FILE = 'polygamy.json'
 
     def parse_file(self):
         with open(self.config_path) as config_file:

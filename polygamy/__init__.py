@@ -97,7 +97,8 @@ def main():
     args = config_parser.parse_args()
 
     if args.action == 'init':
-        git.clone('.polygamy', args.url, args.branch)
+        os.mkdir('.polygamy')
+        git.clone('.polygamy/polygamy', args.url, args.branch)
 
     parser = RepoConfigParser.JsonConfigParser()
     parser.find_config_file(path=os.getcwd())
