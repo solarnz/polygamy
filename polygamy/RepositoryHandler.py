@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from collections import defaultdict
 import math
 import os
 import os.path
@@ -158,6 +159,7 @@ class GitRepositoryHandler(object):
         remotes = config.remotes
 
         self.repositories = {}
+        self.repo_groups = defaultdict(list)
 
         # Determine the default remote
         default_remote_name = None
@@ -181,6 +183,7 @@ class GitRepositoryHandler(object):
             remote = config.remotes[remote_name]
             remote_url = remote['url'] + repo_details['name']
             remote_branch = remote['branch']
+            repo_group = repo_details.get('group')
 
             repo = GitRepository(
                 name=path,
@@ -192,18 +195,26 @@ class GitRepositoryHandler(object):
                 remote_branch=remote_branch,
             )
             self.repositories[path] = repo
+            self.repo_groups[repo_group].append(repo)
+
+        self.enabled_groups = {None} | config.enabled_groups
+
+    def _repository_iter(self):
+        for group in self.enabled_groups:
+            for repo in self.repo_groups[group]:
+                yield repo
 
     def update_repositories(self):
-        for repo in self.repositories.values():
+        for repo in self._repository_iter():
             repo.update_or_clone(self.dry_run)
 
     def fetch(self):
-        for repo in self.repositories.values():
+        for repo in self._repository_iter():
             repo.fetch()
 
     def list(self, seperator, local_changes_only):
         repo_names = []
-        for repo in self.repositories.values():
+        for repo in self._repository_iter():
             change_count = repo.local_change_count()
             if not local_changes_only or (change_count and
                                           not math.isnan(change_count)):
@@ -213,7 +224,7 @@ class GitRepositoryHandler(object):
 
     def status(self):
         statuses = []
-        for repo in sorted(self.repositories.values(), key=lambda r: r.name):
+        for repo in sorted(self._repository_iter(), key=lambda r: r.name):
             status = repo.status()
             statuses.append([
                 repo.name,
@@ -231,3 +242,19 @@ class GitRepositoryHandler(object):
     def push(self, repositories):
         for repository in repositories:
             self.repositories[repository].push()
+
+    def groups(self):
+        for group in sorted(self.repo_groups.keys()):
+            if group is None:
+                continue
+
+            enabled = u'\u2714' if group in self.enabled_groups else ' '
+            print '[%s] %s' % (enabled, group)
+
+    def enable_groups(self, groups):
+        self.config.enabled_groups |= set(groups)
+        self.config.save_preferences()
+
+    def disable_groups(self, groups):
+        self.config.enabled_groups -= set(groups)
+        self.config.save_preferences()

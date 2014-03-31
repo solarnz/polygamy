@@ -79,7 +79,7 @@ def main():
     )
     list_action.set_defaults(action='list')
 
-    # List action
+    # Push action
     push_action = sub_parsers.add_parser(
         'push',
         help=("Pushes the current branch to the remote. Note: this does a"
@@ -93,6 +93,37 @@ def main():
         help="The repositories to push."
     )
     push_action.set_defaults(action='push')
+
+    # Groups action
+    groups = sub_parsers.add_parser(
+        'groups',
+        help=("Shows the enabled and disabled groups.")
+    )
+    groups.set_defaults(action='groups')
+
+    groups_enable = sub_parsers.add_parser(
+        'enable',
+        help=("Enable groups")
+    )
+    groups_enable.add_argument(
+        'groups',
+        type=str,
+        nargs='+',
+        help="The groups to enable."
+    )
+    groups_enable.set_defaults(action='enable_groups')
+
+    groups_disable = sub_parsers.add_parser(
+        'disable',
+        help=("Disable groups.")
+    )
+    groups_disable.add_argument(
+        'groups',
+        type=str,
+        nargs='+',
+        help="The groups to disable."
+    )
+    groups_disable.set_defaults(action='disable_groups')
 
     args = config_parser.parse_args()
 
@@ -118,3 +149,9 @@ def main():
         repository_handler.list(args.seperator, args.local_only)
     elif args.action == 'push':
         repository_handler.push(args.repositories)
+    elif args.action == 'groups':
+        repository_handler.groups()
+    elif args.action == 'enable_groups':
+        repository_handler.enable_groups(args.groups)
+    elif args.action == 'disable_groups':
+        repository_handler.disable_groups(args.groups)

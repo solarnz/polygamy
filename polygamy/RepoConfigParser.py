@@ -1,5 +1,9 @@
 from __future__ import absolute_import
 
+try:
+    import ConfigParser.SafeConfigParser as ConfigParser
+except ImportError:
+    from configparser import ConfigParser
 import json
 import os.path
 
@@ -62,3 +66,21 @@ class JsonConfigParser(BaseConfigParser):
 
         self.repositories = json_data['repos']
         self.remotes = json_data['remotes']
+
+        self.preference_config = ConfigParser()
+        self.preference_config.add_section('groups')
+        self.preference_config.read(
+            os.path.join(self.config_dir, 'preferences.ini')
+        )
+        self.enabled_groups = {
+            k for k, v in self.preference_config.items('groups')
+        }
+
+    def save_preferences(self):
+        self.preference_config.remove_section('groups')
+        self.preference_config.add_section('groups')
+        for group in self.enabled_groups:
+            self.preference_config.set('groups', group, '')
+
+        with open(os.path.join(self.config_dir, 'preferences.ini'), 'w') as f:
+            self.preference_config.write(f)
