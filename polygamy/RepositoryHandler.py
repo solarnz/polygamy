@@ -91,8 +91,8 @@ class GitRepository(object):
 
     def clone_repository(self):
         print(term.green('Cloning repository %s ...' % self.name))
-        git.clone(self.path, self.remote_url, self.remote_branch,
-                  remote_name=self.remote_name)
+        return git.clone(self.path, self.remote_url, self.remote_branch,
+                         remote_name=self.remote_name)
 
     def fetch(self):
         if self.repository_exists():
