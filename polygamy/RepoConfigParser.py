@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 try:
-    import ConfigParser.SafeConfigParser as ConfigParser
+    from ConfigParser import SafeConfigParser as ConfigParser
 except ImportError:
     from configparser import ConfigParser
 import json
