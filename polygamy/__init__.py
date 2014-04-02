@@ -10,6 +10,7 @@ from . import RepoConfigParser
 from . import RepositoryHandler
 from .git import git
 
+
 def build_init_argument(sub_parsers):
     # Init action
     init_parser = sub_parsers.add_parser(
@@ -79,6 +80,7 @@ def build_list_argument(sub_parsers):
         help=("Only list repositories that have local changes.")
     )
     list_action.set_defaults(action='list')
+
 
 def build_push_argument(sub_parsers):
     # Push action
