@@ -11,142 +11,180 @@ from . import RepositoryHandler
 from .git import git
 
 
-def build_init_argument(sub_parsers):
-    # Init action
-    init_parser = sub_parsers.add_parser(
-        "init",
-        help="Initialise a polygamy workspace"
-    )
-    init_parser.add_argument(
-        'url',
-        help='The url of the polygamy config repository you want to clone'
-    )
-    init_parser.add_argument('branch', nargs='?', default='master')
-    init_parser.set_defaults(action='init')
+class ArgumentHandler(object):
+    def __init__(self):
+        self.config_parser = argparse.ArgumentParser(
+            description='Handle multiple scm repos.'
+        )
 
+        sub_parsers = self.config_parser.add_subparsers(title="action")
+        self.build_init_argument(sub_parsers)
+        self.build_pull_argument(sub_parsers)
+        self.build_status_argument(sub_parsers)
+        self.build_fetch_argument(sub_parsers)
+        self.build_list_argument(sub_parsers)
+        self.build_push_argument(sub_parsers)
+        self.build_group_arguments(sub_parsers)
 
-def build_pull_argument(sub_parsers):
-    # Pull action
-    pull_parser = sub_parsers.add_parser(
-        'pull',
-        help="Update your local repositories"
-    )
-    pull_parser.add_argument(
-        '-n', '--dry-run', action='store_true',
-        help=("Run in dry run mode. Remoted will be fetched, but"
-              " configuration will not be updated, and branches will not be"
-              " fast forwarded.")
-    )
-    pull_parser.set_defaults(action='pull')
+    def parse_args(self):
+        self.args = self.config_parser.parse_args()
+        return self.args
 
+    def run_action(self, repository_handler):
+        function_name = 'run_action_%s' % self.args.action
+        if not hasattr(self, function_name):
+            raise ValueError(
+                'Action %s has no run function' % self.args.action
+            )
 
-def build_status_argument(sub_parsers):
-    # Status action
-    status_parser = sub_parsers.add_parser(
-        'status',
-        help=("Shows the current status of your repositories. Included the"
-              " branch you're on, the number of commits you're head of the"
-              " default remote branch, and how many commits you are behind.")
-    )
-    status_parser.set_defaults(action='status')
+        getattr(self, function_name)(repository_handler)
 
+    def build_init_argument(self, sub_parsers):
+        # Init action
+        init_parser = sub_parsers.add_parser(
+            "init",
+            help="Initialise a polygamy workspace"
+        )
+        init_parser.add_argument(
+            'url',
+            help='The url of the polygamy config repository you want to clone'
+        )
+        init_parser.add_argument('branch', nargs='?', default='master')
+        init_parser.set_defaults(action='init')
 
-def build_fetch_argument(sub_parsers):
-    # Fetch action
-    fetch_parser = sub_parsers.add_parser(
-        'fetch',
-        help=("Fetches changes from the remote repository. This will not"
-              " clone new repositories, or fast-forward exsiting"
-              " repositories.")
-    )
-    fetch_parser.set_defaults(action='fetch')
+    def run_action_init(self, repository_handler):
+        self.run_action_pull(repository_handler)
 
+    def build_pull_argument(self, sub_parsers):
+        # Pull action
+        pull_parser = sub_parsers.add_parser(
+            'pull',
+            help="Update your local repositories"
+        )
+        pull_parser.add_argument(
+            '-n', '--dry-run', action='store_true',
+            help=("Run in dry run mode. Remoted will be fetched, but"
+                  " configuration will not be updated, and branches will not"
+                  " be fast forwarded.")
+        )
+        pull_parser.set_defaults(action='pull')
 
-def build_list_argument(sub_parsers):
-    # List action
-    list_action = sub_parsers.add_parser(
-        'list',
-        help="Lists the repositories under control by polygamy."
-    )
-    list_action.add_argument(
-        '-s', '--seperator',
-        default='\n',
-        help=("String to seperate the repositories with. Defaults to a new"
-              " line.")
-    )
-    list_action.add_argument(
-        '-l', '--local-only',
-        action='store_true',
-        help=("Only list repositories that have local changes.")
-    )
-    list_action.set_defaults(action='list')
+    def run_action_pull(self, repository_handler):
+        repository_handler.update_repositories()
 
+    def build_status_argument(self, sub_parsers):
+        # Status action
+        status_parser = sub_parsers.add_parser(
+            'status',
+            help=("Shows the current status of your repositories. Included the"
+                  " branch you're on, the number of commits you're head of the"
+                  " default remote branch, and how many commits you are"
+                  " behind.")
+        )
+        status_parser.set_defaults(action='status')
 
-def build_push_argument(sub_parsers):
-    # Push action
-    push_action = sub_parsers.add_parser(
-        'push',
-        help=("Pushes the current branch to the remote. Note: this does a"
-              " simple push. I.e the local branch name will be the branch"
-              " that will be pushed to on the remote.")
-    )
-    push_action.add_argument(
-        'repositories',
-        type=str,
-        nargs='+',
-        help="The repositories to push."
-    )
-    push_action.set_defaults(action='push')
+    def run_action_status(self, repository_handler):
+        repository_handler.status()
 
+    def build_fetch_argument(self, sub_parsers):
+        # Fetch action
+        fetch_parser = sub_parsers.add_parser(
+            'fetch',
+            help=("Fetches changes from the remote repository. This will not"
+                  " clone new repositories, or fast-forward exsiting"
+                  " repositories.")
+        )
+        fetch_parser.set_defaults(action='fetch')
 
-def build_group_arguments(sub_parsers):
-    # Groups action
-    groups = sub_parsers.add_parser(
-        'groups',
-        help=("Shows the enabled and disabled groups.")
-    )
-    groups.set_defaults(action='groups')
+    def run_action_fetch(self, repository_handler):
+        repository_handler.fetch()
 
-    groups_enable = sub_parsers.add_parser(
-        'enable',
-        help=("Enable groups")
-    )
-    groups_enable.add_argument(
-        'groups',
-        type=str,
-        nargs='+',
-        help="The groups to enable."
-    )
-    groups_enable.set_defaults(action='enable_groups')
+    def build_list_argument(self, sub_parsers):
+        # List action
+        list_action = sub_parsers.add_parser(
+            'list',
+            help="Lists the repositories under control by polygamy."
+        )
+        list_action.add_argument(
+            '-s', '--seperator',
+            default='\n',
+            help=("String to seperate the repositories with. Defaults to a new"
+                  " line.")
+        )
+        list_action.add_argument(
+            '-l', '--local-only',
+            action='store_true',
+            help=("Only list repositories that have local changes.")
+        )
+        list_action.set_defaults(action='list')
 
-    groups_disable = sub_parsers.add_parser(
-        'disable',
-        help=("Disable groups.")
-    )
-    groups_disable.add_argument(
-        'groups',
-        type=str,
-        nargs='+',
-        help="The groups to disable."
-    )
-    groups_disable.set_defaults(action='disable_groups')
+    def run_action_list(self, repository_handler):
+        repository_handler.list(self.args.seperator, self.args.local_only)
+
+    def build_push_argument(self, sub_parsers):
+        # Push action
+        push_action = sub_parsers.add_parser(
+            'push',
+            help=("Pushes the current branch to the remote. Note: this does a"
+                  " simple push. I.e the local branch name will be the branch"
+                  " that will be pushed to on the remote.")
+        )
+        push_action.add_argument(
+            'repositories',
+            type=str,
+            nargs='+',
+            help="The repositories to push."
+        )
+        push_action.set_defaults(action='push')
+
+    def run_action_push(self, repository_handler):
+        repository_handler.push(self.args.repositories)
+
+    def build_group_arguments(self, sub_parsers):
+        # Groups action
+        groups = sub_parsers.add_parser(
+            'groups',
+            help=("Shows the enabled and disabled groups.")
+        )
+        groups.set_defaults(action='groups')
+
+        groups_enable = sub_parsers.add_parser(
+            'enable',
+            help=("Enable groups")
+        )
+        groups_enable.add_argument(
+            'groups',
+            type=str,
+            nargs='+',
+            help="The groups to enable."
+        )
+        groups_enable.set_defaults(action='enable_groups')
+
+        groups_disable = sub_parsers.add_parser(
+            'disable',
+            help=("Disable groups.")
+        )
+        groups_disable.add_argument(
+            'groups',
+            type=str,
+            nargs='+',
+            help="The groups to disable."
+        )
+        groups_disable.set_defaults(action='disable_groups')
+
+    def run_action_groups(self, repository_handler):
+        repository_handler.groups()
+
+    def run_action_enable_groups(self, repository_handler):
+        repository_handler.enable_groups(self.args.groups)
+
+    def run_action_disable_groups(self, repository_handler):
+        repository_handler.disable_groups(self.args.groups)
 
 
 def main():
-    config_parser = argparse.ArgumentParser(
-        description='Handle multiple scm repos.'
-    )
-
-    sub_parsers = config_parser.add_subparsers(title="action")
-    build_init_argument(sub_parsers)
-    build_pull_argument(sub_parsers)
-    build_status_argument(sub_parsers)
-    build_fetch_argument(sub_parsers)
-    build_list_argument(sub_parsers)
-    build_push_argument(sub_parsers)
-    build_group_arguments(sub_parsers)
-
-    args = config_parser.parse_args()
+    argument_handler = ArgumentHandler()
+    args = argument_handler.parse_args()
 
     if args.action == 'init':
         os.mkdir('.polygamy')
@@ -160,19 +198,4 @@ def main():
         dry_run=getattr(args, 'dry_run', False)
     )
 
-    if args.action in ('pull', 'init'):
-        repository_handler.update_repositories()
-    elif args.action == 'status':
-        repository_handler.status()
-    elif args.action == 'fetch':
-        repository_handler.fetch()
-    elif args.action == 'list':
-        repository_handler.list(args.seperator, args.local_only)
-    elif args.action == 'push':
-        repository_handler.push(args.repositories)
-    elif args.action == 'groups':
-        repository_handler.groups()
-    elif args.action == 'enable_groups':
-        repository_handler.enable_groups(args.groups)
-    elif args.action == 'disable_groups':
-        repository_handler.disable_groups(args.groups)
+    argument_handler.run_action(repository_handler)
