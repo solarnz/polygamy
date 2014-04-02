@@ -10,14 +10,7 @@ from . import RepoConfigParser
 from . import RepositoryHandler
 from .git import git
 
-
-def main():
-    config_parser = argparse.ArgumentParser(
-        description='Handle multiple scm repos.'
-    )
-
-    sub_parsers = config_parser.add_subparsers(title="action")
-
+def build_init_argument(sub_parsers):
     # Init action
     init_parser = sub_parsers.add_parser(
         "init",
@@ -30,6 +23,8 @@ def main():
     init_parser.add_argument('branch', nargs='?', default='master')
     init_parser.set_defaults(action='init')
 
+
+def build_pull_argument(sub_parsers):
     # Pull action
     pull_parser = sub_parsers.add_parser(
         'pull',
@@ -43,6 +38,8 @@ def main():
     )
     pull_parser.set_defaults(action='pull')
 
+
+def build_status_argument(sub_parsers):
     # Status action
     status_parser = sub_parsers.add_parser(
         'status',
@@ -52,6 +49,8 @@ def main():
     )
     status_parser.set_defaults(action='status')
 
+
+def build_fetch_argument(sub_parsers):
     # Fetch action
     fetch_parser = sub_parsers.add_parser(
         'fetch',
@@ -61,6 +60,8 @@ def main():
     )
     fetch_parser.set_defaults(action='fetch')
 
+
+def build_list_argument(sub_parsers):
     # List action
     list_action = sub_parsers.add_parser(
         'list',
@@ -79,6 +80,7 @@ def main():
     )
     list_action.set_defaults(action='list')
 
+def build_push_argument(sub_parsers):
     # Push action
     push_action = sub_parsers.add_parser(
         'push',
@@ -94,6 +96,8 @@ def main():
     )
     push_action.set_defaults(action='push')
 
+
+def build_group_arguments(sub_parsers):
     # Groups action
     groups = sub_parsers.add_parser(
         'groups',
@@ -124,6 +128,21 @@ def main():
         help="The groups to disable."
     )
     groups_disable.set_defaults(action='disable_groups')
+
+
+def main():
+    config_parser = argparse.ArgumentParser(
+        description='Handle multiple scm repos.'
+    )
+
+    sub_parsers = config_parser.add_subparsers(title="action")
+    build_init_argument(sub_parsers)
+    build_pull_argument(sub_parsers)
+    build_status_argument(sub_parsers)
+    build_fetch_argument(sub_parsers)
+    build_list_argument(sub_parsers)
+    build_push_argument(sub_parsers)
+    build_group_arguments(sub_parsers)
 
     args = config_parser.parse_args()
 
