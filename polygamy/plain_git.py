@@ -155,3 +155,41 @@ class PlainGit(BaseGit):
             ],
             cwd=path
         )
+
+    @staticmethod
+    def start_new_branch(path, branch_name, remote_name, remote_branch):
+        subprocess.check_call(
+            [
+                'git', 'checkout', '-b', branch_name,
+                '%s/%s' % (remote_name, remote_branch)
+            ],
+            cwd=path
+        )
+
+    @staticmethod
+    def checkout_branch(path, branch_name):
+        print branch_name
+        subprocess.check_call(
+            ['git', 'checkout', branch_name],
+            cwd=path
+        )
+
+    @staticmethod
+    def list_branches(path):
+        output = subprocess.check_output(
+            ['git', 'branch'],
+            cwd=path
+        )
+
+        branches = []
+
+        for branch in output.split('\n'):
+            branch = branch.strip()
+            if not branch:
+                continue
+            if branch.startswith('* '):
+                current_branch = branch[2:]
+            else:
+                branches.add(branch)
+
+        return current_branch, branches

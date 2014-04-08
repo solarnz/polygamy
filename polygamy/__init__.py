@@ -25,6 +25,7 @@ class ArgumentHandler(object):
         self.build_list_argument(sub_parsers)
         self.build_push_argument(sub_parsers)
         self.build_group_arguments(sub_parsers)
+        self.build_start_argument(sub_parsers)
 
     def parse_args(self):
         self.args = self.config_parser.parse_args()
@@ -181,6 +182,30 @@ class ArgumentHandler(object):
     def run_action_disable_groups(self, repository_handler):
         repository_handler.disable_groups(self.args.groups)
 
+    def build_start_argument(self, sub_parsers):
+        # Push action
+        start_action = sub_parsers.add_parser(
+            'start',
+            help=("Starts a new branch on the specified repositories.")
+        )
+        start_action.add_argument(
+            'branch_name',
+            type=str,
+            help="The branch name you want to create"
+        )
+        start_action.add_argument(
+            'repositories',
+            type=str,
+            nargs='+',
+            help="The repositories to start the new branch on."
+        )
+        start_action.set_defaults(action='start')
+
+    def run_action_start(self, repository_handler):
+        repository_handler.start(
+            self.args.branch_name,
+            self.args.repositories
+        )
 
 def main():
     argument_handler = ArgumentHandler()

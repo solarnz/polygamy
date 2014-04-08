@@ -150,6 +150,18 @@ class GitRepository(object):
         current_branch = git.get_proper_current_branch(self.path)
         git.push(self.path, self.remote_name, current_branch, current_branch)
 
+    def start(self, branch):
+        current_branch, branches = git.list_branches(self.path)
+        if branch not in branches:
+            print branch
+            git.start_new_branch(
+                self.path, branch, self.remote_name, self.remote_branch
+            )
+        else:
+            print(term.red(
+                "Branch %s already exists in %s." % (branch, self.name)
+            ))
+
 
 class GitRepositoryHandler(object):
     def __init__(self, config, dry_run):
@@ -258,3 +270,7 @@ class GitRepositoryHandler(object):
     def disable_groups(self, groups):
         self.config.enabled_groups -= set(groups)
         self.config.save_preferences()
+
+    def start(self, branch_name, repositories):
+        for repo in repositories:
+            self.repositories[repo].start(branch_name)
