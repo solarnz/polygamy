@@ -283,7 +283,7 @@ class GitRepositoryHandler(object):
                 continue
 
             enabled = u'\u2714' if group in self.enabled_groups else ' '
-            print '[%s] %s' % (enabled, group)
+            print('[%s] %s' % (enabled, group))
 
     def enable_groups(self, groups):
         self.config.enabled_groups |= set(groups)
