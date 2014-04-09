@@ -168,7 +168,6 @@ class PlainGit(BaseGit):
 
     @staticmethod
     def checkout_branch(path, branch_name):
-        print branch_name
         subprocess.check_call(
             ['git', 'checkout', branch_name],
             cwd=path
