@@ -154,7 +154,6 @@ class GitRepository(object):
     def start(self, branch):
         current_branch, branches = git.list_branches(self.path)
         if branch not in branches:
-            print branch
             git.start_new_branch(
                 self.path, branch, self.remote_name, self.remote_branch
             )
