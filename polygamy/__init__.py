@@ -6,7 +6,6 @@ import os
 from blessings import Terminal
 term = Terminal()
 
-from . import RepoConfigParser
 from . import RepositoryHandler
 from .git import git
 
@@ -207,6 +206,7 @@ class ArgumentHandler(object):
             self.args.repositories
         )
 
+
 def main():
     argument_handler = ArgumentHandler()
     args = argument_handler.parse_args()
@@ -215,11 +215,7 @@ def main():
         os.mkdir('.polygamy')
         git.clone('.polygamy/polygamy', args.url, args.branch)
 
-    parser = RepoConfigParser.JsonConfigParser()
-    parser.find_config_file(path=os.getcwd())
-    parser.parse_file()
     repository_handler = RepositoryHandler.GitRepositoryHandler(
-        config=parser,
         dry_run=getattr(args, 'dry_run', False)
     )
 

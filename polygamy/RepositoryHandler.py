@@ -9,6 +9,7 @@ from blessings import Terminal
 term = Terminal()
 import tabulate
 
+from . import RepoConfigParser
 from .git import git
 from .base_git import NoSuchRemote
 
@@ -164,10 +165,17 @@ class GitRepository(object):
 
 
 class GitRepositoryHandler(object):
-    def __init__(self, config, dry_run):
-        self.config = config
+    def __init__(self, dry_run):
         self.dry_run = dry_run
 
+        self.config = RepoConfigParser.JsonConfigParser()
+        self.config.find_config_file(os.getcwd())
+
+        self.configure()
+
+    def configure(self):
+        config = self.config
+        config.parse_file()
         remotes = config.remotes
 
         self.repositories = {}
