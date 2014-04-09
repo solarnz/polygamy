@@ -201,7 +201,7 @@ class GitRepositoryHandler(object):
 
             remote = config.remotes[remote_name]
             remote_url = remote['url'] + repo_details['name']
-            remote_branch = remote['branch']
+            remote_branch = repo_details.get('branch', remote['branch'])
             repo_group = repo_details.get('group')
 
             repo = GitRepository(
