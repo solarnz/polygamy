@@ -223,6 +223,21 @@ class GitRepositoryHandler(object):
             for repo in self.repo_groups[group]:
                 yield repo
 
+    def fetch_polygamy_repo(self):
+        if not os.path.exists(os.path.join(
+                self.config.config_dir, 'polygamy', '.git'
+        )):
+            return
+
+        print('Updating polygamy repository...')
+        try:
+            git.pull(os.path.join(
+                self.config.config_dir, 'polygamy'
+            ))
+        except:
+            print(term.red('Unable to update polygamy repository.'))
+        self.configure()
+
     def update_repositories(self):
         for repo in self._repository_iter():
             repo.update_or_clone(self.dry_run)

@@ -70,6 +70,7 @@ class ArgumentHandler(object):
         pull_parser.set_defaults(action='pull')
 
     def run_action_pull(self, repository_handler):
+        repository_handler.fetch_polygamy_repo()
         repository_handler.update_repositories()
 
     def build_status_argument(self, sub_parsers):
@@ -97,6 +98,7 @@ class ArgumentHandler(object):
         fetch_parser.set_defaults(action='fetch')
 
     def run_action_fetch(self, repository_handler):
+        repository_handler.fetch_polygamy_repo()
         repository_handler.fetch()
 
     def build_list_argument(self, sub_parsers):

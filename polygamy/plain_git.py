@@ -192,3 +192,10 @@ class PlainGit(BaseGit):
                 branches.add(branch)
 
         return current_branch, branches
+
+    @staticmethod
+    def pull(path):
+        subprocess.check_call(
+            ['git', 'pull'],
+            cwd=path
+        )
