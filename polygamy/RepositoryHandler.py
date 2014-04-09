@@ -7,6 +7,8 @@ import os.path
 
 from blessings import Terminal
 term = Terminal()
+import gevent
+import gevent.pool
 import tabulate
 
 from . import RepoConfigParser
@@ -51,17 +53,15 @@ class GitRepository(object):
             git.set_remote_url(self.path, self.remote_name, self.remote_url)
         return True
 
-    def update_repository(self, dry_run):
-        print('Fetching repository %s ...' % self.name)
-
-        if not self.update_remote(dry_run):
-            return
-
-        if not self.fetch():
+    def fast_foward(self, dry_run):
+        if not self.repository_exists():
             return
 
         local_change_count = self.local_change_count()
         remote_change_count = self.remote_change_count()
+
+        if remote_change_count:
+            print(term.blue('Attempting to fastforward %s.' % self.name))
 
         if remote_change_count or local_change_count:
             print(
@@ -96,14 +96,19 @@ class GitRepository(object):
         return git.clone(self.path, self.remote_url, self.remote_branch,
                          remote_name=self.remote_name)
 
-    def fetch(self):
+    def fetch(self, dry_run):
+        print(term.blue('Fetching repository %s ...' % self.name))
+
         if self.repository_exists():
+            if not self.update_remote(dry_run):
+                return False
             if not git.fetch_remote(self.path, self.remote_name):
                 print(term.red("Unable to fetch %s in %s." % (self.remote_name,
                                                               self.path)))
                 return False
             return True
-        return False
+        else:
+            return self.clone_repository()
 
     def local_change_count(self):
         local_change_count = git.count_different_commits(
@@ -239,12 +244,16 @@ class GitRepositoryHandler(object):
         self.configure()
 
     def update_repositories(self):
+        self.fetch()
         for repo in self._repository_iter():
-            repo.update_or_clone(self.dry_run)
+            repo.fast_foward(self.dry_run)
 
     def fetch(self):
+        pool = gevent.pool.Pool(size=6)
         for repo in self._repository_iter():
-            repo.fetch()
+            pool.apply_async(repo.fetch, [self.dry_run])
+
+        pool.join()
 
     def list(self, seperator, local_changes_only):
         repo_names = []

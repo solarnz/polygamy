@@ -13,6 +13,7 @@ setup(
     },
     install_requires=[
         'blessings == 1.5.1',
+        'gevent >= 1.0',
         'tabulate == 0.7.2',
     ],
 

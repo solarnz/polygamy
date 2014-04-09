@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 
 import os
-import subprocess
+
+from gevent import subprocess
 
 from .base_git import (BaseGit, NoSuchRemote)
 
