@@ -69,12 +69,14 @@ class JsonConfigParser(BaseConfigParser):
 
         self.preference_config = ConfigParser()
         self.preference_config.add_section('groups')
+        self.preference_config.add_section('git')
         self.preference_config.read(
             os.path.join(self.config_dir, 'preferences.ini')
         )
         self.enabled_groups = {
             k for k, v in self.preference_config.items('groups')
         }
+        self.git_config = self.preference_config.items('git')
 
     def save_preferences(self):
         self.preference_config.remove_section('groups')

@@ -200,3 +200,18 @@ class PlainGit(BaseGit):
             ['git', 'pull'],
             cwd=path
         )
+
+    @staticmethod
+    def config_get(path, field):
+        output = subprocess.check_output(
+            ['git', 'config', '--get', field],
+            cwd=path
+        )
+        return output.strip()
+
+    @staticmethod
+    def config_set(path, field, value):
+        subprocess.check_call(
+            ['git', 'config', field, value],
+            cwd=path
+        )

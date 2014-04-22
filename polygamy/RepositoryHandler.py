@@ -167,6 +167,11 @@ class GitRepository(object):
                 "Branch %s already exists in %s." % (branch, self.name)
             ))
 
+    def set_git_config(self, config):
+        for field, value in config:
+            if git.config_get(self.path, field) != value:
+                git.config_set(self.path, field, value)
+
 
 class GitRepositoryHandler(object):
     def __init__(self, dry_run):
@@ -222,6 +227,7 @@ class GitRepositoryHandler(object):
             self.repo_groups[repo_group].append(repo)
 
         self.enabled_groups = {None} | config.enabled_groups
+        self.git_config = config.git_config
 
     def _repository_iter(self):
         for group in self.enabled_groups:
@@ -246,6 +252,7 @@ class GitRepositoryHandler(object):
     def update_repositories(self):
         self.fetch()
         for repo in self._repository_iter():
+            repo.set_git_config(self.git_config)
             repo.fast_foward(self.dry_run)
 
     def fetch(self):

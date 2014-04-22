@@ -57,3 +57,14 @@ class Pygit2Git(PlainGit):
         if repo.head_is_detached or repo.head_is_unborn:
             return None
         return repo.head.shorthand
+
+    @staticmethod
+    def config_get(path, field):
+        repo = pygit2.Repository(path)
+        values = repo.config.get_multivar(field)
+        return values[0] if values else None
+
+    @staticmethod
+    def config_set(path, field, value):
+        repo = pygit2.Repository(path)
+        repo.config.set_multivar(field, '', value)
