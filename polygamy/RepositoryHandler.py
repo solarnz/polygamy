@@ -61,7 +61,7 @@ class GitRepository(object):
         remote_change_count = self.remote_change_count()
 
         if remote_change_count:
-            print(term.blue('Attempting to fastforward %s.' % self.name))
+            print(term.cyan('Attempting to fastforward %s.' % self.name))
 
         if remote_change_count or local_change_count:
             print(
@@ -97,7 +97,7 @@ class GitRepository(object):
                          remote_name=self.remote_name)
 
     def fetch(self, dry_run):
-        print(term.blue('Fetching repository %s ...' % self.name))
+        print(term.cyan('Fetching repository %s ...' % self.name))
 
         if self.repository_exists():
             if not self.update_remote(dry_run):
