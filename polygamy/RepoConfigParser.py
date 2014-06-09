@@ -86,3 +86,14 @@ class JsonConfigParser(BaseConfigParser):
 
         with open(os.path.join(self.config_dir, 'preferences.ini'), 'w') as f:
             self.preference_config.write(f)
+
+    def save_config_file(self):
+        with open(self.config_path, 'w') as config_file:
+            config_file.write(json.dumps(
+                {
+                    'remotes': self.remotes,
+                    'repos': self.repositories,
+                },
+                indent=4,
+                separators=(',', ': '),
+            ))

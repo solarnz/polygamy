@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import os
+import os.path
+import urlparse
 
 from gevent import subprocess
 
@@ -215,3 +217,16 @@ class PlainGit(BaseGit):
             ['git', 'config', field, value],
             cwd=path
         )
+
+    @staticmethod
+    def repo_name_from_url(url):
+        parsed = urlparse.urlparse(url)
+        split_path = os.path.split(parsed.path)
+
+        repo_name = split_path[-1]
+        split_repo_name = os.path.splitext(repo_name)
+
+        if split_repo_name[1] == '.git':
+            repo_name = split_repo_name[0]
+
+        return repo_name

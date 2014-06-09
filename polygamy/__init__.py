@@ -29,6 +29,7 @@ class ArgumentHandler(object):
         self.build_push_argument(sub_parsers)
         self.build_group_arguments(sub_parsers)
         self.build_start_argument(sub_parsers)
+        self.build_add_argument(sub_parsers)
 
     def parse_args(self):
         self.args = self.config_parser.parse_args()
@@ -210,6 +211,42 @@ class ArgumentHandler(object):
         repository_handler.start(
             self.args.branch_name,
             self.args.repositories
+        )
+
+    def build_add_argument(self, sub_parsers):
+        # Push action
+        add_action = sub_parsers.add_parser(
+            'add',
+            help=("Adds the repository to the working directory.")
+        )
+        add_action.add_argument(
+            'repository_url',
+            type=str,
+            help="The url of the repository you want to add.",
+        )
+        add_action.add_argument(
+            'directory',
+            type=str,
+            help="The path to clone the repository into.",
+        )
+        add_action.add_argument(
+            '--group',
+            type=str,
+            help="The group to add this repository to.",
+        )
+        add_action.add_argument(
+            '--branch',
+            type=str,
+            help="The branch to checkout in the repository."
+        )
+        add_action.set_defaults(action='add')
+
+    def run_action_add(self, repository_handler):
+        repository_handler.add_repository(
+            self.args.repository_url,
+            self.args.directory,
+            self.args.group,
+            self.args.branch,
         )
 
 

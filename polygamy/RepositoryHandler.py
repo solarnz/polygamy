@@ -209,9 +209,15 @@ class GitRepositoryHandler(object):
                     'valid default remote!' % path
                 )
 
-            remote = config.remotes[remote_name]
-            remote_url = remote['url'] + repo_details['name']
-            remote_branch = repo_details.get('branch', remote['branch'])
+            if remote_name in config.remotes:
+                remote = config.remotes[remote_name]
+                remote_url = remote['url'] + repo_details['name']
+                remote_branch = repo_details.get('branch', remote['branch'])
+            else:
+                remote_url = remote_name
+                remote_branch = repo_details.get('branch', 'master')
+                remote_name = 'origin'
+
             repo_group = repo_details.get('group')
 
             repo = GitRepository(
@@ -312,3 +318,15 @@ class GitRepositoryHandler(object):
     def start(self, branch_name, repositories):
         for repo in repositories:
             self.repositories[repo].start(branch_name)
+
+    def add_repository(self, repository_url, path, group, branch):
+        repo = {
+            'remote': repository_url,
+            'branch': branch if branch else 'master'
+        }
+
+        if group is not None:
+            repo['group'] = group
+
+        self.config.repositories[path] = repo
+        self.config.save_config_file()
