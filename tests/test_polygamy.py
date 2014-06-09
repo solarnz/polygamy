@@ -10,8 +10,6 @@ Tests for `polygamy` module.
 
 import unittest
 
-from polygamy import polygamy
-
 
 class TestPolygamy(unittest.TestCase):
 
@@ -23,6 +21,3 @@ class TestPolygamy(unittest.TestCase):
 
     def tearDown(self):
         pass
-
-if __name__ == '__main__':
-    unittest.main()

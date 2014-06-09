@@ -44,14 +44,6 @@ polygamy.plain_git module
     :undoc-members:
     :show-inheritance:
 
-polygamy.polygamy module
-------------------------
-
-.. automodule:: polygamy.polygamy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 polygamy.pygit2_git module
 --------------------------
 

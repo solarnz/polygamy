@@ -9,6 +9,10 @@ term = Terminal()
 from . import RepositoryHandler
 from .git import git
 
+__author__ = 'Chris Trotman'
+__email__ = 'chris@trotman.io'
+__version__ = '0.1.2'
+
 
 class ArgumentHandler(object):
     def __init__(self):
