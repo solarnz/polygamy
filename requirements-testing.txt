@@ -1,4 +1,5 @@
-wheel
-nose
-mock
 flake8
+mock
+nose
+nose-cov
+wheel

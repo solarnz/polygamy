@@ -37,6 +37,7 @@ coverage:
 	coverage run --source polygamy setup.py test
 	coverage report -m
 	coverage html
+	open htmlcov/index.html
 
 docs:
 	rm -f docs/polygamy.rst
@@ -44,6 +45,7 @@ docs:
 	sphinx-apidoc -o docs/ polygamy
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+	open docs/_build/html/index.html
 
 release: clean
 	python setup.py sdist upload

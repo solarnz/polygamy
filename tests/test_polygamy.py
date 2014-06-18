@@ -1,14 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-test_polygamy
-----------------------------------
-
-Tests for `polygamy` module.
-"""
-
 import unittest
+
+from polygamy import polygamy
 
 
 class TestPolygamy(unittest.TestCase):
@@ -17,7 +11,7 @@ class TestPolygamy(unittest.TestCase):
         pass
 
     def test_something(self):
-        pass
+        self.assertEqual(polygamy, polygamy)
 
     def tearDown(self):
         pass
